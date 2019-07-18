@@ -8,11 +8,11 @@ import GeoJSON from 'ol/format/GeoJSON';
 import Vector from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
 import './openLayers/css/default.css';
+import Input from '@material-ui/core/Input';
 import axios from 'axios';
-import {bbox} from 'ol/loadingstrategy';
 
 class BackgroundMap {
-  constructor(data=null){
+  constructor(){
     this.map = new Map({
       target: "map",
       view: new View({
@@ -22,7 +22,13 @@ class BackgroundMap {
         minZoom:2
       }),
       layers: [
-        new TileLayer({source: new OSM()})
+        new TileLayer({source: new OSM()})//,
+        //new VectorLayer({
+          //source: new Vector({
+            //url: "http://ggt-des.ibge.gov.br/api/bcim/unidades-federativas/RJ",
+            //format: new GeoJSON()
+          //})
+        //})
       ]
     })
     
@@ -39,34 +45,23 @@ class BackgroundMap {
   }
 }
 
-function MapContainer(props) {
-  //const [mapState, mapUpdater] = useState(null);
-  const mapViewContainer = (<div  id="map"
-                                  style={{
-                                    position: "absolute",
-                                    width: "100%",
-                                    height: "100%",
-                                    bottom: 0,
-                                    zindex: 0
-                                  }}></div>);  
-  useEffect(() => {
-    let backgroundMap = new BackgroundMap();
-    backgroundMap.appendLayer(props.layerUrl);    
-  }, []);
-
-  return mapViewContainer; 
-}
-
-class MapContainerWrapper extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {layerUrls: props.layerUrls}
-    console.log(this.state);
+function MapContainer() {    
+  const [mapContainerState, mapConateinerUpdater] = useState( null );
+  useEffect(() => mapConateinerUpdater( {bMap: new BackgroundMap()} ), [] );
+  
+  function inputLayerUri(uri) {
+    console.log(mapContainerState);
+    mapContainerState.bMap.appendLayer(uri);
   }
 
-  render() {
-    return (<MapContainer layerUrl={this.state.layerUrls[0]} />);
-  }
+  return (
+    <div>
+      <div id="map" style={{position: "absolute", width: "100%", height: "100%", bottom: 0, zindex: 0}}></div>
+      <div>
+        <Input onClick={e => inputLayerUri(e.target.value)} />
+      </div>
+    </div>
+  );
 }
 
-export default MapContainerWrapper;
+export default MapContainer;
