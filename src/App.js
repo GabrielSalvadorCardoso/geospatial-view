@@ -9,7 +9,13 @@ import Vector from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
 import './openLayers/css/default.css';
 import Input from '@material-ui/core/Input';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import Button from '@material-ui/core/Button';
 import axios from 'axios';
+//http://localhost:30000/api/bcim/aldeias-indigenas
+//http://localhost:30000/api/bcim/trechos-ferroviarios
 
 class BackgroundMap {
   constructor(){
@@ -52,13 +58,24 @@ function MapContainer() {
   function inputLayerUri(uri) {
     console.log(mapContainerState);
     mapContainerState.bMap.appendLayer(uri);
+    //<Input onClick={e => inputLayerUri(e.target.value)} />
   }
 
   return (
     <div>
       <div id="map" style={{position: "absolute", width: "100%", height: "100%", bottom: 0, zindex: 0}}></div>
       <div>
-        <Input onClick={e => inputLayerUri(e.target.value)} />
+        <ExpansionPanel >
+          <ExpansionPanelSummary>
+            Camadas
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <Input id="layerUri" />
+            <Button onClick={e => inputLayerUri(document.getElementById('layerUri').value)}>
+              Buscar
+            </Button>
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
       </div>
     </div>
   );
