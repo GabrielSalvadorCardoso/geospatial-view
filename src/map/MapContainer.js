@@ -11,6 +11,87 @@ import Overlay from 'ol/Overlay';
 import { setFeatureProperties } from '../actions/actions';
 import { connect } from "react-redux";
 import '../openLayers/css/popup.css';
+import ImageLayer from 'ol/layer/Image'
+import { ImageStatic } from 'ol/source'
+import Projection from 'ol/proj/Projection.js';
+import axios from 'axios';
+import Style from 'ol/style/Style';
+import Stroke from 'ol/style/Stroke';
+import Fill from 'ol/style/Fill';
+import Icon from 'ol/style/Icon';
+
+const geojsonObject = {
+  'type': 'FeatureCollection',
+  'crs': {
+    'type': 'name',
+    'properties': {
+      'name': 'EPSG:3857'
+    }
+  },
+  'features': [{
+    'type': 'Feature',
+    'geometry': {
+      'type': 'Point',
+      'coordinates': [0, 0]
+    }
+  }, {
+    'type': 'Feature',
+    'geometry': {
+      'type': 'LineString',
+      'coordinates': [[4e6, -2e6], [8e6, 2e6]]
+    }
+  }, {
+    'type': 'Feature',
+    'geometry': {
+      'type': 'LineString',
+      'coordinates': [[4e6, 2e6], [8e6, -2e6]]
+    }
+  }, {
+    'type': 'Feature',
+    'geometry': {
+      'type': 'Polygon',
+      'coordinates': [[[-5e6, -1e6], [-4e6, 1e6], [-3e6, -1e6]]]
+    }
+  }, {
+    'type': 'Feature',
+    'geometry': {
+      'type': 'MultiLineString',
+      'coordinates': [
+        [[-1e6, -7.5e5], [-1e6, 7.5e5]],
+        [[1e6, -7.5e5], [1e6, 7.5e5]],
+        [[-7.5e5, -1e6], [7.5e5, -1e6]],
+        [[-7.5e5, 1e6], [7.5e5, 1e6]]
+      ]
+    }
+  }, {
+    'type': 'Feature',
+    'geometry': {
+      'type': 'MultiPolygon',
+      'coordinates': [
+        [[[-5e6, 6e6], [-5e6, 8e6], [-3e6, 8e6], [-3e6, 6e6]]],
+        [[[-2e6, 6e6], [-2e6, 8e6], [0, 8e6], [0, 6e6]]],
+        [[[1e6, 6e6], [1e6, 8e6], [3e6, 8e6], [3e6, 6e6]]]
+      ]
+    }
+  }, {
+    'type': 'Feature',
+    'geometry': {
+      'type': 'GeometryCollection',
+      'geometries': [{
+        'type': 'LineString',
+        'coordinates': [[-5e6, -5e6], [0, -5e6]]
+      }, {
+        'type': 'Point',
+        'coordinates': [4e6, -5e6]
+      }, {
+        'type': 'Polygon',
+        'coordinates': [[[1e6, -6e6], [2e6, -4e6], [3e6, -6e6]]]
+      }]
+    }
+  }]
+};
+
+
 
 //const MappifiedMap = mappify(MapComponent);
 
@@ -87,17 +168,149 @@ export class MapContainer {
     return propertiesHTML;
   }
 
-  appendLayer(url) {
-    //axios.options(url).then(function(response) {
-      //console.log(response.data);
-    //});
+  async appendLayer(url) {
     const vector_layer = new VectorLayer({
       source: new Vector({
         url: url,
-        format: new GeoJSON()
+        format: new GeoJSON(),
+      }),
+      //style: [
+        //'https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678111-map-marker-512.png'
+        /*fill: new Fill({
+          color: 'blue'
+        }),
+        stroke: new Stroke({
+          color: 'olive',
+          width: 1
+        })*/
+      //}),]
+    });
+    let defaultStyle = new Style({
+      stroke: new Stroke({
+        color: 'blue',
+        width: 3
+      }),
+      fill: new Fill({
+        color: 'rgba(0, 0, 255, 0.1)'
+      })
+    })
+    let bufferStyle = new Style({
+      stroke: new Stroke({
+        color: 'green',
+        width: 1.5,
+        lineDashOffset: 5
+      }),
+      fill: new Fill({
+        color: 'rgba(0, 255, 0, 0.1)'
+      })
+    })
+    
+    let terrenoInundacaoStyle = new Style({
+      stroke: new Stroke({
+        color: 'red',
+        width: 3
+      }),
+      fill: new Fill({
+        color: 'rgba(255, 0, 0, 0.1)'
+      })
+    })
+    let urlRedMarker = 'https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678111-map-marker-512.png';
+    let pointStyle = new Style({
+      image: new Icon({
+        opacity: 1,
+        src: urlRedMarker,
+        scale: 0.05
+      })
+    })
+    let urlOrangeMarker = "https://gkv.com/wp-content/uploads/leaflet-maps-marker-icons/map_marker-orange-small.png";
+    let urlLightBlueMarker = "http://www.pngall.com/wp-content/uploads/2017/05/Map-Marker-PNG-Pic.png";
+    let urlBlackMarker = "https://cdn3.iconfinder.com/data/icons/basic-filled/80/09_BO_POI_1-512.png"
+    let rjCapitalStyle = new Style({
+      image: new Icon({
+        opacity: 1,
+        src: urlBlackMarker,
+        scale: 0.1
+      })
+    })
+    /*
+    http://localhost:8000/api/restfull-ide/bcim/unidades-federativas/RJ
+    http://localhost:8000/api/restfull-ide/bcim/terreno-sujeito-inundacao
+    http://localhost:8000/api/restfull-ide/bcim/capital/14
+    http://localhost:8000/api/restfull-ide/bcim/capital/14/buffer/0.5
+    */
+    vector_layer.setStyle(function(feature, resolution) {
+      if (url === "http://localhost:8000/api/restfull-ide/bcim/capital/14") {
+        return rjCapitalStyle; 
+      } else if(url.startsWith("http://localhost:8000/api/restfull-ide/bcim/capital/14/buffer")) {
+        return bufferStyle;
+      } else if (feature.getGeometry().getType() === "Point") {        
+        return pointStyle;
+      } else if (url === "http://localhost:8000/api/restfull-ide/bcim/terreno-sujeito-inundacao") {
+        return terrenoInundacaoStyle;
+      } else {
+        return defaultStyle;
+      }
+    })
+    
+    this.map.addLayer(vector_layer);
+    /*
+    //https://openlayers.org/en/latest/apidoc/module-ol_source_Vector-VectorSource.html
+    let response = await axios.get(url)
+    
+    let format = new GeoJSON()
+    let parsedFeatures = format.readFeatures(response.data)
+    let transformedFeatures = parsedFeatures.map((feature) => {
+      feature.getGeometry().transform('EPSG:4326', 'EPSG:3857')
+    })
+    const vector_layer = new VectorLayer({
+      source: new Vector({
+        features: transformedFeatures
       })
     });
     this.map.addLayer(vector_layer);
+    */
+  }
+
+  appendGeoJSONLayer(geojson) {
+    console.log(geojson)
+    const _geojsonObject = {
+      'type': 'FeatureCollection',
+      'crs': {
+        'type': 'name',
+        'properties': {
+          'name': 'EPSG:3857'
+        }
+      },
+      'features': [{"type": "Feature", "geometry": geojson["geometry"], "properties": geojson["properties"]}]
+    };
+    let geojsonFeature = (new GeoJSON()).readFeatures(_geojsonObject)
+    console.log(geojsonFeature)
+
+    const vector_layer = new VectorLayer({
+      source: new Vector({
+        features: geojsonFeature
+      }),
+    });
+    this.map.addLayer(vector_layer);
+  }
+
+  appendImageLayer(uri) {
+    console.log("Precisa implementar o envelope no servidor")
+    var extent = [0, 0, 1024, 968];
+      var projection = new Projection({
+        units: 'pixels',
+        extent: extent
+      });
+
+    const imageLayer = new ImageLayer({
+      source: new ImageStatic({
+        url: 'http://localhost:8000/api/restfull-ide/bcim/unidades-federativas/1.png',
+        crossOrigin: '',
+        projection: projection,
+        imageExtent: extent
+      })
+    })
+    this.map.addLayer(imageLayer)
   }
 }
 export default MapContainer;

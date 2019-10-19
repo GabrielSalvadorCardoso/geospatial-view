@@ -1,0 +1,29 @@
+{
+    "@context": {
+        "populacao_homens": {
+            "@id": "https://schema.org/population",
+            "@type": "@id"
+        },
+        "populacao_mulheres": {
+            "@id": "https://schema.org/population",
+            "@type": "@id"
+        },
+        "ano": {
+            "@id": "https://schema.org/Date",
+            "@type": "@id"
+        },
+        "geom": {
+            "@id": "https://schema.org/polygon",
+            "@type": "@id"
+        },
+        "nome": {
+            "@id": "https://schema.org/name",
+            "@type": "@id"
+        }
+    },
+    "populacao_homens": "http://localhost:8010/api/ibge/estatistica/projecoes/2018/11/populacao_homens",
+    "populacao_mulheres": "http://localhost:8010/api/ibge/estatistica/projecoes/2018/11/populacao_mulheres",
+    "geom": "http://localhost:8000/api/restful-ide/bcim/unidades-federativas/RJ/transform/3857",
+    "ano": "http://localhost:8010/api/ibge/estatistica/projecoes/2018/11/ano",
+    "nome": "http://localhost:8000/api/restful-ide/bcim/unidades-federativas/RJ/nome"
+}

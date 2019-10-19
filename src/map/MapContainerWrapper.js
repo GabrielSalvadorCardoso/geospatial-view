@@ -13,13 +13,24 @@ class MapContainerWrapper extends React.Component {
         if(this.mapContainer === null) {
             this.mapContainer = new MapContainer();
         }
+        //https://openlayers.org/en/latest/examples/geojson.html
+        
     }
 
     render() {
-        let res = this.props.layersUrls
+        let res = this.props.layersUrls;
+        let imageRes = this.props.imageLayersUris;
+        //console.log(imageRes)
         if(res.length !== 0) {
             this.mapContainer.appendLayer(res[res.length-1])
         }
+        if(imageRes.length !== 0) {
+            this.mapContainer.appendImageLayer(imageRes[imageRes.length-1])
+        }
+        if(this.props.geojsonFromLinkedData) {
+            this.mapContainer.appendGeoJSONLayer(this.props.geojsonFromLinkedData)
+        }
+        
         return (
         <div>
             <div id="map" style={{position: "absolute", width: "100%", height: "100%", bottom: 0, zindex: 0}}></div>
@@ -34,9 +45,11 @@ class MapContainerWrapper extends React.Component {
 
 const mapStateToProps = function(state) {
     return {
-        layersUrls: state.layersUrls
+        layersUrls: state.layersUrls,
+        imageLayersUris: state.imageLayersUris,
+        geojsonFromLinkedData: state.geojsonFromLinkedData
     }
-  }
+}
 
 MapContainerWrapper = connect(mapStateToProps)(MapContainerWrapper);
 export default MapContainerWrapper;
