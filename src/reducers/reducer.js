@@ -12,7 +12,9 @@ const reducer = function(state={
     mainDrawerIsOpen: false,
     feature: null,
     showOptionsLayerModal: false,
-    layerOptionsUri: null
+    layerOptionsUri: null,
+    toggleLayerUrl: null,
+    switchState: true
 }, action) {
     console.log("ACAO EXECUTADA: " + action.type);
     switch (action.type) {
@@ -26,12 +28,17 @@ const reducer = function(state={
             newLayersUrls.push(action.url);
             //console.log(newLayersUrls)
             return {...state, layersUrls: newLayersUrls};
+
+        case "TOGGLE_LAYER":
+            console.log(action.layerUrl)
+            return {...state, toggleLayerUrl: action.layerUrl, switchState: action.switchState}
         
         case "SHOW_LAYER_OPTIONS_IN_MODAL":
-            if (!urlIsValid(action.uri, state.layersUrls)) {       
-                return state;
+            if (action.uri.startsWith("http://") | action.uri.startsWith("https://")) {
+                return {...state, showOptionsLayerModal: true, layerOptionsUri: action.uri}
+                
             }
-            return {...state, showOptionsLayerModal: true, layerOptionsUri: action.uri}
+            return state;            
 
         case "CLOSE_LAYER_OPTIONS_MODAL":
             return {...state, showOptionsLayerModal: false}

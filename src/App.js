@@ -12,8 +12,7 @@ import ToggleMainDrawer from './actions/ToggleMainDrawer';
 //import AppBar from '@material-ui/core/AppBar';
 
 
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
+
 //import PropertyGrid from '@terrestris/react-geo/dist/Grid/PropertyGrid/PropertyGrid';
 import OptionsModal from './components/OptionsModal';
 import MainDrawer from './views/components/MainDrawer'
@@ -44,6 +43,7 @@ class App extends React.Component {
   //   this.setState({drawerOpen: !this.state.drawerOpen})
   // }
 
+  /*
   handleGetEntryPointItemClicked(uri) {
     this.props.addLayerUrl(uri);
   }
@@ -51,6 +51,7 @@ class App extends React.Component {
   handleOptionsEntryPointItemClicked(uri) {
     this.props.showLayerOptionsInModal(uri)
   }
+  */
 
   /*getHypermediaObjects(response) {
     let hypermediaControlObjects = []
@@ -104,6 +105,7 @@ class App extends React.Component {
     this.props.addImageLayerUri(uri)
   }*/
 
+  /*
   createEntryPointItem(name, uri) {
     return (
     <ListItem>
@@ -117,6 +119,7 @@ class App extends React.Component {
     </ListItem>
     )
   }
+  */
 
   /*getEntryPointList() {
     
@@ -144,7 +147,7 @@ class App extends React.Component {
           <MapContainerWrapper />         
           <MainDrawer />
 
-          <OptionsModal />
+          {/* <OptionsModal /> */}
 
           <AppBar>
             <Toolbar>

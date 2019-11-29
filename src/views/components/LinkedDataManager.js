@@ -88,9 +88,9 @@ class LinkedDataManager extends React.Component {
     render() {
         {/**/}
         return (
-            <div>
+            <div>     
                 <Button
-                    style={{margin: 5, background: "#aaddff"}}
+                    style={{margin: 5, background: "#aaddff", width:"92%"}}
                     onClick={(event) => {this.toggleLinkedDataModal()}}>
                     Load Linked Data
                 </Button>

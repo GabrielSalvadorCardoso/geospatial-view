@@ -17,6 +17,12 @@ class MapContainerWrapper extends React.Component {
         
     }
 
+    componentDidUpdate(prevProps) {
+        if (this.props.toggleLayerUrl) {
+            this.mapContainer.toggleLayer(this.props.toggleLayerUrl, this.props.switchState)
+        }
+    }
+
     render() {
         let res = this.props.layersUrls;
         let imageRes = this.props.imageLayersUris;
@@ -30,6 +36,8 @@ class MapContainerWrapper extends React.Component {
         if(this.props.geojsonFromLinkedData) {
             this.mapContainer.appendGeoJSONLayer(this.props.geojsonFromLinkedData)
         }
+
+        
         
         return (
         <div>
@@ -46,6 +54,8 @@ class MapContainerWrapper extends React.Component {
 const mapStateToProps = function(state) {
     return {
         layersUrls: state.layersUrls,
+        toggleLayerUrl: state.toggleLayerUrl,
+        switchState: state.switchState,
         imageLayersUris: state.imageLayersUris,
         geojsonFromLinkedData: state.geojsonFromLinkedData
     }
