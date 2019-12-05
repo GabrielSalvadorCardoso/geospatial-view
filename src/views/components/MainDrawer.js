@@ -1,13 +1,15 @@
 import React from 'react';
 import { Button, Drawer, ExpansionPanel, ExpansionPanelSummary,
     ExpansionPanelDetails, Input, List, ListItem, ListItemText,
-    Switch } from '@material-ui/core';
+    Switch, Select, MenuItem, Typography } from '@material-ui/core';
 import axios from 'axios';
 import { connect } from "react-redux";
 import { addLayerUrl, addImageLayerUri, showLayerOptionsInModal } from '../../actions/actions';
 import { ToggleLayer } from '../../actions/ToggleLayer';
 import LinkedDataManager from './LinkedDataManager'
 import OptionsModal from '../../components/OptionsModal'
+import InfoIcon from '@material-ui/icons/Info';
+import GetAppIcon from '@material-ui/icons/GetApp';
 const CONTENT_TYPE_JSONLD = "application/ld+json"
 const ENTRYPOINT_HYPERMEDIA_CONTROL_URI = "https://schema.org/EntryPoint"
 
@@ -20,6 +22,7 @@ class MainDrawer extends React.Component {
             switchState: true
             //layerOptionsUri: null
         };
+        this.handleSelectPreLoadedEntryPoint = this.handleSelectPreLoadedEntryPoint.bind(this)
     }    
 
     getHypermediaObjects(response) {
@@ -65,10 +68,10 @@ class MainDrawer extends React.Component {
         <ListItem>
           <ListItemText primary={name} />
             <Button onClick={(event) => {this.handleOptionsEntryPointItemClicked(uri)}}>
-              I
+                <InfoIcon />
             </Button>
             <Button onClick={(event) => {this.handleGetEntryPointItemClicked(uri)}}>
-              R
+                <GetAppIcon />
             </Button>                
         </ListItem>
         )
@@ -98,7 +101,7 @@ class MainDrawer extends React.Component {
         return <p>Nenhuma camada carregada</p>
     }
 
-    toggleLayer(uri) {
+    toggleLayer(event, uri) {
         console.log("toggle")
         //event.target.checked = !event.target.checked
         
@@ -117,7 +120,7 @@ class MainDrawer extends React.Component {
                             <Switch
                                 value={index}
                                 checked={true}
-                                onChange={(event) => {this.toggleLayer(uri)}}
+                                onChange={(event) => {this.toggleLayer(event, uri)}}
                                 inputProps={{ 'aria-label': 'secondary checkbox' }}
                             />
                             <Button onClick={(event) => {this.handleOptionsItemClicked(uri)}}>OPTIONS</Button>        
@@ -153,6 +156,10 @@ class MainDrawer extends React.Component {
         })
     }
 
+    handleSelectPreLoadedEntryPoint(event) {
+        this.requestUri(event.target.value)
+    }
+
     render() {
         let _layerOptionsUri = this.props.layerOptionsUri?this.props.layerOptionsUri:null;
         return (
@@ -167,6 +174,16 @@ class MainDrawer extends React.Component {
                     </Button>               
                     
                     <LinkedDataManager />
+                </div>
+
+                <div style={{width:"100%", margin: 5}}>
+                    <Typography style={{margin: 10, width:"92%"}}>Pre-Loaded EntryPoints</Typography>
+                    <select style={{margin: 5, width:"92%"}} onChange={this.handleSelectPreLoadedEntryPoint}>
+                        <option value="none" selected>-</option>
+                        {/* <option value="http://localhost:8000/api/restful-ide/bcim/">BCIM</option> */}
+                        <option value="http://localhost:8040/api/bc25/rj/">BC25-RJ</option>
+                        <option value="http://localhost:8060/api/osm/">OSM</option>
+                    </select>
                 </div>
 
                 <ExpansionPanel style={{background: "#dddddd", maxWidth: "500px", margin: 5}}>

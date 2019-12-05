@@ -6,7 +6,7 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import axios from 'axios';
-import {Paper, Box} from '@material-ui/core'
+import {Paper, Box, Typography} from '@material-ui/core'
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -337,6 +337,40 @@ class OptionsModal extends React.Component {
                                 </Box>
                             </Grid>
                         </Grid>
+
+                        {/* <Grid item xs={12}>
+                            <Box boxShadow={3}>
+                                <Card style={{width: "100%"}}>
+                                    <CardContent>
+                                        <select id="select-property-0" style={{width: "100px", margin: 5}}>
+                                            <option value="none" selected>-</option>
+                                            <option value="gid">gid</option>
+                                            <option value="fclass">fclass</option>
+                                            <option value="name">name</option>
+                                        </select>
+                                        <Typography style={{display: "inline"}}>like</Typography>
+                                        <TextField id="input-property-value-2" style={{width: "10%", marginLeft: 5, marginRight: 5}}/>
+                                        <select id="select-property-1" style={{width: "100px", margin: 5}}>
+                                            <option value="none" selected>-</option>
+                                            <option value="gid">gid</option>
+                                            <option value="fclass">fclass</option>
+                                            <option value="name">name</option>
+                                        </select>
+                                        <Typography style={{display: "inline"}}>like</Typography>
+                                        <TextField id="input-property-value-2" style={{width: "10%", marginLeft: 5, marginRight: 5}}/>
+                                        <select id="select-property-2" style={{width: "100px", margin: 5}}>
+                                            <option value="none" selected>-</option>
+                                            <option value="gid">gid</option>
+                                            <option value="fclass">fclass</option>
+                                            <option value="name">name</option>
+                                        </select>
+                                        <Typography style={{display: "inline"}}>like</Typography>
+                                        <TextField id="input-property-value-2" style={{width: "10%", marginLeft: 5, marginRight: 5}}/>
+                                        <Button>Pesquisar</Button>
+                                    </CardContent>
+                                </Card>
+                            </Box>
+                        </Grid> */}
 
                         <Grid item xs={12}>
                             <Box boxShadow={3}>

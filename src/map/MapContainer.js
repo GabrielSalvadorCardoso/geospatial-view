@@ -26,7 +26,8 @@ import Icon from 'ol/style/Icon';
 
 export class MapContainer {
   constructor() {
-
+    this.appendLayer = this.appendLayer.bind(this)
+    //this.isBicycleSimplePath = this.isBicycleSimplePath.bind(this)
     var overlay = new Overlay({
       element: document.getElementById('popup'),
       autoPan: true,
@@ -69,6 +70,7 @@ export class MapContainer {
 
       if(clickedFeature) {
         let featureKeyValProps = Object.entries(clickedFeature.values_);
+        featureKeyValProps.push(["gid", clickedFeature.id_])
         let featurePropsNoGeom = featureKeyValProps.filter( (keyVal, idx) => { return keyVal[0] !== "geometry" });
         // let properties = {}
         // featurePropsNoGeom.forEach( function(keyVal) {
@@ -161,6 +163,40 @@ export class MapContainer {
         scale: 0.1
       })
     })
+
+    
+    let isBicycleSimplePath = false;
+    let urlArray = url.split("/")
+    if(url.startsWith("http://localhost:8060/api/osm/bicycle-rental")) {
+      if(urlArray[6] === undefined || urlArray[7] === undefined) { isBicycleSimplePath = true; }
+      else if(!isNaN(urlArray[6])) {
+        if(urlArray[7] === undefined) { isBicycleSimplePath = true }
+        isBicycleSimplePath = false
+      }
+    }
+
+    let isMonumentSimplePath = false;
+    if(url.startsWith("http://localhost:8060/api/osm/monument") || url.startsWith("http://localhost:8060/api/osm/monument/within")) {
+      if(urlArray[6] === undefined || urlArray[7] === undefined) { isMonumentSimplePath = true; }
+      else if(!isNaN(urlArray[6])) {
+        if(urlArray[7] === undefined) { isMonumentSimplePath = true }
+        isMonumentSimplePath = false
+      }
+    }
+    
+    let isParkSimplePath = false;
+    if(url.startsWith("http://localhost:8060/api/osm/park")) {
+      if(urlArray[6] === undefined || urlArray[7] === undefined) { isParkSimplePath = true; }
+      else if(!isNaN(urlArray[6])) {
+        if(urlArray[7] === undefined) { isParkSimplePath = true }
+        isParkSimplePath = false
+      }
+    } 
+    if(url.startsWith("http://localhost:8060/api/osm/park/within")) {
+      
+        isParkSimplePath = true
+    }
+
     /*
     http://localhost:8000/api/restfull-ide/bcim/unidades-federativas/RJ
     http://localhost:8000/api/restfull-ide/bcim/terreno-sujeito-inundacao
@@ -172,6 +208,13 @@ export class MapContainer {
         return rjCapitalStyle; 
       } else if(url.startsWith("http://localhost:8000/api/restfull-ide/bcim/capital/14/buffer")) {
         return bufferStyle;
+      } else if (isParkSimplePath) {
+        //return new Style({ image: new Icon({opacity: 1, src: "https://cdn4.iconfinder.com/data/icons/tree-22/74/12-512.png", scale: 0.05}) })
+        return new Style({ image: new Icon({opacity: 1, src: "http://localhost:8060/api/osm/styles/park.svg", scale: 0.05}) })
+      } else if(isBicycleSimplePath) {
+        return new Style({ image: new Icon({opacity: 1, src: "http://localhost:8060/api/osm/styles/bicycle.svg", scale: 0.5}) })
+      } else if(isMonumentSimplePath) {
+        return new Style({ image: new Icon({opacity: 1, src: "http://localhost:8060/api/osm/styles/monument.svg", scale: 0.3}) })
       } else if (feature.getGeometry().getType() === "Point") {        
         return pointStyle;
       } else if (url === "http://localhost:8000/api/restfull-ide/bcim/terreno-sujeito-inundacao") {
@@ -200,6 +243,21 @@ export class MapContainer {
     this.map.addLayer(vector_layer);
     */
   }
+
+  /*isBicycleSimplePath(url) {
+    let urlArray = url.split("/")
+    if(url.startsWith("http://localhost:8060/api/osm/bicycle-rental")) {
+      if(urlArray[6] === undefined) {
+        return true;
+      }
+      if(!isNaN(urlArray[6])) {
+        if(urlArray[7] === undefined) {
+          return true
+        }
+        return false
+      }
+    }    
+  }*/
 
   appendGeoJSONLayer(geojson) {
     console.log(geojson)
@@ -254,7 +312,7 @@ export class MapContainer {
     this.map.addLayer(imageLayer)
   }
 
-  /*toggleLayer(url, switchState) {
+  toggleLayer(url, switchState) {
     console.log(url)
     let layerList = this.map.getLayers()
     for(let i=0; i<layerList.length; i++) {
@@ -269,6 +327,6 @@ export class MapContainer {
     }
     //let visibility = this.map.getLayers()[index].visible
     //this.map.getLayers()[index].visible = !visibility
-  }*/
+  }
 }
 export default MapContainer;
